@@ -24,7 +24,8 @@
   position: absolute;
   right: 1rem;
   top: 2.7rem;
-  font-size: 2.8rem;
+  font-size: 2.6rem;
+  font-family: "Noto Color Emoji", system-ui, sans-serif;
 }
 
 .form.loading {
