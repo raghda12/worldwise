@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import Product from "./pages/Product";
 import Pricing from "./pages/Pricing";
 import Homepage from "./pages/Homepage";
@@ -16,7 +16,7 @@ function App() {
   return (
     <AuthProvider>
       <CitiesProvider>
-        <BrowserRouter>
+        <HashRouter>
           <Routes>
             <Route index element={<Homepage />} />
             <Route path="product" element={<Product />} />
@@ -38,7 +38,7 @@ function App() {
             </Route>
             <Route path="*" element={<PageNotFound />} />
           </Routes>
-        </BrowserRouter>
+        </HashRouter>
       </CitiesProvider>
     </AuthProvider>
   );
