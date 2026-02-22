@@ -1,0 +1,88 @@
+{
+  "cities": [
+    {
+      "id": "521d",
+      "cityName": "Longuida/Longida",
+      "country": "Spain",
+      "emoji": "🇪🇸",
+      "date": "2026-02-22T09:15:50.612Z",
+      "notes": "",
+      "position": {
+        "lat": "42.76314586689494",
+        "lng": "-1.3842773437500002"
+      }
+    },
+    {
+      "id": "5848",
+      "cityName": "Alaejos",
+      "country": "Spain",
+      "emoji": "🇪🇸",
+      "date": "2026-02-22T09:15:55.682Z",
+      "notes": "",
+      "position": {
+        "lat": "41.29431726315258",
+        "lng": "-5.163574218750001"
+      }
+    },
+    {
+      "id": "58cd",
+      "cityName": "Veyreau",
+      "country": "France",
+      "emoji": "🇫🇷",
+      "date": "2026-02-22T09:16:03.524Z",
+      "notes": "",
+      "position": {
+        "lat": "44.166444664458595",
+        "lng": "3.2299804687500004"
+      }
+    },
+    {
+      "id": "a6d1",
+      "cityName": "Huerta de Valdecarabanos",
+      "country": "Spain",
+      "emoji": "🇪🇸",
+      "date": "2026-02-22T09:33:49.723Z",
+      "notes": "",
+      "position": {
+        "lat": "39.825413103424786",
+        "lng": "-3.6474609375000004"
+      }
+    },
+    {
+      "id": "4909",
+      "cityName": "Hurmen",
+      "country": "Mongolia",
+      "emoji": "🇲🇳",
+      "date": "2026-02-22T10:06:47.110Z",
+      "notes": "",
+      "position": {
+        "lat": "42.8115217450979",
+        "lng": "104.0625"
+      }
+    },
+    {
+      "id": "7661",
+      "cityName": "Jayena",
+      "country": "Spain",
+      "emoji": "🇪🇸",
+      "date": "2026-02-22T10:14:47.586Z",
+      "notes": "",
+      "position": {
+        "lat": "36.91928913390968",
+        "lng": "-3.8232421875000004"
+      }
+    },
+    {
+      "id": "f1b3",
+      "cityName": "Miajadas",
+      "country": "Spain",
+      "emoji": "🇪🇸",
+      "date": "2026-02-22T12:53:35.430Z",
+      "notes": "",
+      "position": {
+        "lat": "39.11301365149975",
+        "lng": "-5.976562500000001"
+      }
+    }
+  ]
+}
