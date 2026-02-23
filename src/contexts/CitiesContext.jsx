@@ -1,13 +1,15 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
+import { supabase } from "../services/supabase"; // تأكد من إنشاء هذا الملف
 
 const CitiesContext = createContext();
-const BASE_URL = "http://localhost:8888";
+
 const initialState = {
   cities: [],
   isLoading: false,
   currentCity: {},
   error: "",
 };
+
 function reducer(state, action) {
   switch (action.type) {
     case "loading":
@@ -36,74 +38,120 @@ function reducer(state, action) {
       throw new Error("Unknown action type");
   }
 }
+
 function CitiesProvider({ children }) {
   const [{ cities, isLoading, currentCity, error }, dispatch] = useReducer(
     reducer,
     initialState,
   );
+
+  // 1. جلب كل المدن
   useEffect(function () {
     async function fetchCities() {
       dispatch({ type: "loading" });
       try {
-        const res = await fetch(`${BASE_URL}/cities`);
-        const data = await res.json();
-        dispatch({ type: "cities/loaded", payload: data });
-      } catch {
+        const { data, error } = await supabase.from("cities").select("*");
+
+        if (error) throw error;
+
+        // تحويل البيانات لتناسب تطبيقك (دمج lat/lng في position)
+        const transformedData = data.map((city) => ({
+          ...city,
+          position: { lat: city.lat, lng: city.lng },
+        }));
+
+        dispatch({ type: "cities/loaded", payload: transformedData });
+      } catch (err) {
         dispatch({
           type: "rejected",
-          payload: "there was an error loading data...",
+          payload: "There was an error loading cities...",
         });
       }
     }
     fetchCities();
   }, []);
+
+  // 2. جلب مدينة واحدة بالتفصيل
   async function getCity(id) {
-    if (Number(id) === currentCity.id) return;
+    if (id === currentCity.id) return;
+
     dispatch({ type: "loading" });
     try {
-      const res = await fetch(`${BASE_URL}/cities/${id}`);
-      const data = await res.json();
-      dispatch({ type: "city/loaded", payload: data });
-    } catch {
+      const { data, error } = await supabase
+        .from("cities")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) throw error;
+
+      const transformedCity = {
+        ...data,
+        position: { lat: data.lat, lng: data.lng },
+      };
+
+      dispatch({ type: "city/loaded", payload: transformedCity });
+    } catch (err) {
       dispatch({
         type: "rejected",
-        payload: "there was an error loading data...",
+        payload: "There was an error loading the city...",
       });
     }
   }
+
+  // 3. إضافة مدينة جديدة
   async function createCity(newCity) {
     dispatch({ type: "loading" });
     try {
-      const res = await fetch(`${BASE_URL}/cities`, {
-        method: "POST",
-        body: JSON.stringify(newCity),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-      dispatch({ type: "city/created", payload: data });
-    } catch {
+      // تفكيك position إلى lat و lng ليناسب جدول Supabase
+      const supabaseCity = {
+        cityName: newCity.cityName,
+        country: newCity.country,
+        emoji: newCity.emoji,
+        date: newCity.date,
+        notes: newCity.notes,
+        lat: newCity.position.lat,
+        lng: newCity.position.lng,
+      };
+
+      const { data, error } = await supabase
+        .from("cities")
+        .insert([supabaseCity])
+        .select();
+
+      if (error) throw error;
+
+      const finalCity = {
+        ...data[0],
+        position: { lat: data[0].lat, lng: data[0].lng },
+      };
+
+      dispatch({ type: "city/created", payload: finalCity });
+    } catch (err) {
       dispatch({
         type: "rejected",
-        payload: "there was an error creating city...",
+        payload: "There was an error creating the city...",
       });
     }
   }
+
+  // 4. حذف مدينة
   async function deleteCity(id) {
     dispatch({ type: "loading" });
     try {
-      await fetch(`${BASE_URL}/cities/${id}`, {
-        method: "DELETE",
-      });
+      const { error } = await supabase.from("cities").delete().eq("id", id);
+
+      if (error) throw error;
+
       dispatch({ type: "city/deleted", payload: id });
-    } catch {
+    } catch (err) {
       dispatch({
         type: "rejected",
-        payload: "there was an error deleteing city...",
+        payload: "There was an error deleting the city...",
       });
     }
   }
+
   return (
     <CitiesContext.Provider
       value={{
@@ -120,10 +168,12 @@ function CitiesProvider({ children }) {
     </CitiesContext.Provider>
   );
 }
+
 function useCities() {
   const context = useContext(CitiesContext);
   if (context === undefined)
     throw new Error("CitiesContext was used outside the CitiesProvider");
   return context;
 }
+
 export { CitiesProvider, useCities };
