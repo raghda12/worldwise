@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
-import { supabase } from "../services/supabase"; // تأكد من إنشاء هذا الملف
+import { supabase } from "../services/supabase";
 
 const CitiesContext = createContext();
 
@@ -45,7 +45,6 @@ function CitiesProvider({ children }) {
     initialState,
   );
 
-  // 1. جلب كل المدن
   useEffect(function () {
     async function fetchCities() {
       dispatch({ type: "loading" });
@@ -54,7 +53,6 @@ function CitiesProvider({ children }) {
 
         if (error) throw error;
 
-        // تحويل البيانات لتناسب تطبيقك (دمج lat/lng في position)
         const transformedData = data.map((city) => ({
           ...city,
           position: { lat: city.lat, lng: city.lng },
@@ -71,7 +69,6 @@ function CitiesProvider({ children }) {
     fetchCities();
   }, []);
 
-  // 2. جلب مدينة واحدة بالتفصيل
   async function getCity(id) {
     if (id === currentCity.id) return;
 
@@ -99,12 +96,11 @@ function CitiesProvider({ children }) {
     }
   }
 
-  // 3. إضافة مدينة جديدة
   async function createCity(newCity) {
     dispatch({ type: "loading" });
     try {
-      // تفكيك position إلى lat و lng ليناسب جدول Supabase
       const supabaseCity = {
+        id: crypto.randomUUID().split("-")[0],
         cityName: newCity.cityName,
         country: newCity.country,
         emoji: newCity.emoji,
@@ -113,12 +109,10 @@ function CitiesProvider({ children }) {
         lat: newCity.position.lat,
         lng: newCity.position.lng,
       };
-
       const { data, error } = await supabase
         .from("cities")
         .insert([supabaseCity])
         .select();
-
       if (error) throw error;
 
       const finalCity = {
@@ -135,7 +129,6 @@ function CitiesProvider({ children }) {
     }
   }
 
-  // 4. حذف مدينة
   async function deleteCity(id) {
     dispatch({ type: "loading" });
     try {
